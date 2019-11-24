@@ -1,26 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react' 
 
-function App() {
+import { createNFAObject } from './converter'
+
+// assets
+import './App.css'
+
+let fileReader
+
+function App () {
+  const [values, setValues] = useState(null)
+
+  useEffect(() => {
+    values !== null && createNFAObject(values)
+  }, [values])
+
+  function handleFileRead () {
+    const content = fileReader.result
+    setValues(content)
+  }
+
+  function handleChange(file) {
+    fileReader = new FileReader()
+    fileReader.onloadend = handleFileRead
+    fileReader.readAsText(file)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='app'>
+      <div className='app-header'>
+        <form>
+          <label htmlFor='file-upload'>Upload NFA</label>
+          <input onChange={evt => handleChange(evt.target.files[0])} type='file' id='file-upload' />
+        </form>
+        {values !== null && <p style={{ maxWidth: '200px' }}>{values}</p>}
+      </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

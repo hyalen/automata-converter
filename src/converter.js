@@ -1,5 +1,5 @@
 let obj = {}
-
+let NFATable = {}
 export const createNFAObject = (file) => {
   const fileData = file.split('\n')
 
@@ -13,11 +13,61 @@ export const createNFAObject = (file) => {
   obj.finalState = fileData[2]
   obj.transitions = transitions
   const categorizedTransitions = categorizeTransitionByState(obj.alphabet);
-  const NFATable = createNFATable(categorizedTransitions, obj.transitions);
-  const DFATable = getDFAInitialState(NFATable);
-  const DFATransitions = DFATransitionsArray(DFATable)
+  NFATable = createNFATable(categorizedTransitions, obj.transitions);
+  const initialDFATable = getDFAInitialState(NFATable);
+  const DFATable = createDFATable(initialDFATable, NFATable)
+  // const DFATransitions = DFATransitionsArray(DFATable)
+  // getNextDFAState(DFATransitions, NFATable, obj.alphabet.split(' ').join(''))
+}
 
-  getNextDFAState(DFATransitions, NFATable, obj.alphabet.split(' ').join(''))
+function createDFATable(initialDFATable, NFATable) {
+  let transitionArray = [initialDFATable[0][0].transition]
+  Object.keys(initialDFATable).forEach(key => {
+    initialDFATable[key].map(transitionItem => {
+      if (foundItemInsideArray(transitionArray, initialDFATable[key], 'state').length === 0) {
+        transitionArray.push(transitionItem.state)
+        insertNewDFAItem(initialDFATable, transitionItem.state)
+      }
+    })
+    //console.log(initialDFATable)
+  })
+
+}
+
+// checks if the new transition from DFA is already inside the array
+function foundItemInsideArray(transitionArray, DFATableArray, type) {
+  if (type === 'state') {
+    return DFATableArray.filter(element => transitionArray.includes(element.state));
+  } else if (type === 'transition') {
+    return DFATableArray.filter(element => transitionArray.includes(element.transition));
+  }
+}
+
+function insertNewDFAItem (initialDFATable, itemToBeInserted) {
+  let state = itemToBeInserted.split(',')
+  let newState = []
+  Object.keys(NFATable).forEach(key => {
+    if (foundItemInsideArray(state, NFATable[key], 'transition').length > 0) {
+      let stringifiedTransition = ''
+      let newStateCopy = foundItemInsideArray(state, NFATable[key], 'transition').map((item, index) => {
+        Object.keys(item).forEach(key => {
+          if (key === 'state') {
+            stringifiedTransition += item[key] + ','
+          }
+        })
+      })
+      newState.push(stringifiedTransition.substr(0, stringifiedTransition.length - 1))
+    }
+  })
+
+  Object.keys(initialDFATable).map(key => {
+    initialDFATable[key].push({
+      transition: itemToBeInserted,
+      state: newState[key]
+    })
+  })
+
+  console.log(initialDFATable)
 }
 
 export function categorizeTransitionByState(alphabet) {
@@ -31,17 +81,6 @@ export function categorizeTransitionByState(alphabet) {
     }
  */
   return categorizedTransitions;
-}
-
-export const DFATransitionsArray = (DFAStates) => {
-  const DFATransitionsWithDuplicates = Object.keys(DFAStates).map(state => { 
-    return DFAStates[state].map(transitionObj => {
-      if(transitionObj.state !== "Y") {
-        return transitionObj.state
-      }
-    });
-  }).flat();
-  return Array.from(new Set(DFATransitionsWithDuplicates)) ;
 }
 
 export function createNFATable(categorizedTransitionsObj, rawTransitions) {

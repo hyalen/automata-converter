@@ -19,6 +19,7 @@ export const createNFAObject = (file) => {
   const DFATransitions = DFATransitionsArray(DFATable)
   console.log('DFAWithInitialState.......... ',DFATable )
   console.log('dfa transitions............ ', DFATransitions)
+  getNextDFAState(DFATransitions, NFATable, obj.alphabet.split(' ').join(''))
 }
 
 export function categorizeTransitionByState(alphabet) {
@@ -62,24 +63,37 @@ function getAFDInitialState(categorizedAFN) {
   return categorizedAFD;
 }
 
-function getNextDFAState(DFATransitions, NFATable, DFATable) {
+function searchAFDState(statesToCheckFor, NFATable, alphabetSymbol) {
+    return NFATable[alphabetSymbol].filter(transitionObj => {
+      if(statesToCheckFor.includes(transitionObj.transition)) {
+        return transitionObj
+      }
+    })
+}
+
+function getNextDFAState(DFATransitions, NFATable, DFAalphabet) {
   const newTransitionObject = {
     transition: '',
     state: ''
   };
 
   let statesToCheckFor;
+  const foundStates = []
 
   const lastRegisteredTransition = DFATransitions[DFATransitions.length - 1];
   newTransitionObject.transition = lastRegisteredTransition;
 
 /*    check if next DFA transition has more than one 
    state to check for in the NFA table, "x, x1", as an example */
+
   if(lastRegisteredTransition.includes(',')) {
     statesToCheckFor = lastRegisteredTransition.split(',')
   } else {
-    statesToCheckFor = lastRegisteredTransition
+    statesToCheckFor = [lastRegisteredTransition]
   }
 
-
+  for(const alphabetSymbol of DFAalphabet) {
+    foundStates.push({ for: alphabetSymbol, transitions: searchAFDState(statesToCheckFor, NFATable, alphabetSymbol)})
+  }
+  
 }

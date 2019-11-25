@@ -2,6 +2,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
+Using this library as a referece: https://github.com/dunnock/react-sigma
+The https://github.com/strathausen/dracula one had iseeus regarding one of its depencies, Raphael, which
+is an SVG visualizer. 
+
 In the project directory, you can run:
 
 ### `npm start`

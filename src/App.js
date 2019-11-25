@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react' 
+import Graph from './components/Graph'
 
 import { createNFAObject, getNFAAlphabet, categorizeTransitionByState, createNFATable } from './converter'
 
@@ -28,6 +29,7 @@ function App () {
   return (
     <div className='app'>
       <div className='app-header'>
+      <Graph />
         <form>
           <label htmlFor='file-upload'>Upload NFA</label>
           <input onChange={evt => handleChange(evt.target.files[0])} type='file' id='file-upload' />

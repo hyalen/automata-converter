@@ -14,11 +14,9 @@ export const createNFAObject = (file) => {
   obj.transitions = transitions
   const categorizedTransitions = categorizeTransitionByState(obj.alphabet);
   const NFATable = createNFATable(categorizedTransitions, obj.transitions);
-  console.log('nfa table............. ', NFATable)
   const DFATable = getDFAInitialState(NFATable);
   const DFATransitions = DFATransitionsArray(DFATable)
-  console.log('DFAWithInitialState.......... ',DFATable )
-  console.log('dfa transitions............ ', DFATransitions)
+
   getNextDFAState(DFATransitions, NFATable, obj.alphabet.split(' ').join(''))
 }
 

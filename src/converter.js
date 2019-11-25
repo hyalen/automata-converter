@@ -15,7 +15,7 @@ export const createNFAObject = (file) => {
   const categorizedTransitions = categorizeTransitionByState(obj.alphabet);
   const NFATable = createNFATable(categorizedTransitions, obj.transitions);
   console.log('nfa table............. ', NFATable)
-  const DFATable = getAFDInitialState(NFATable);
+  const DFATable = getDFAInitialState(NFATable);
   const DFATransitions = DFATransitionsArray(DFATable)
   console.log('DFAWithInitialState.......... ',DFATable )
   console.log('dfa transitions............ ', DFATransitions)
@@ -55,15 +55,15 @@ export function createNFATable(categorizedTransitionsObj, rawTransitions) {
   return clonedCategorizedTransitionsObj;
 }
 
-function getAFDInitialState(categorizedAFN) {
-  const categorizedAFD = JSON.parse(JSON.stringify(categorizedAFN));
+function getDFAInitialState(categorizedAFN) {
+  const categorizedDFA = JSON.parse(JSON.stringify(categorizedAFN));
   Object.keys(categorizedAFN).map(state => {
-    categorizedAFD[state] = [categorizedAFD[state].shift()];
+    categorizedDFA[state] = [categorizedDFA[state].shift()];
   })
-  return categorizedAFD;
+  return categorizedDFA;
 }
 
-function searchAFDState(statesToCheckFor, NFATable, alphabetSymbol) {
+function searchDFAState(statesToCheckFor, NFATable, alphabetSymbol) {
     return NFATable[alphabetSymbol].filter(transitionObj => {
       if(statesToCheckFor.includes(transitionObj.transition)) {
         return transitionObj
@@ -105,7 +105,7 @@ function getNextDFAState(DFATransitions, NFATable, DFAalphabet) {
     X in NFA when 1 -> X,11
   */
   for(const alphabetSymbol of DFAalphabet) {
-    foundStates.push({ for: alphabetSymbol, transitions: searchAFDState(statesToCheckFor, NFATable, alphabetSymbol)})
+    foundStates.push({ for: alphabetSymbol, transitions: searchDFAState(statesToCheckFor, NFATable, alphabetSymbol)})
   }
   
 }

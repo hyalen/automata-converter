@@ -67,7 +67,19 @@ function getNextDFAState(DFATransitions, NFATable, DFATable) {
     transition: '',
     state: ''
   };
-  
-  const lastRegisteredTransitions = DFATransitions[DFATransitions.length - 1];
+
+  let statesToCheckFor;
+
+  const lastRegisteredTransition = DFATransitions[DFATransitions.length - 1];
+  newTransitionObject.transition = lastRegisteredTransition;
+
+/*    check if next DFA transition has more than one 
+   state to check for in the NFA table, "x, x1", as an example */
+  if(lastRegisteredTransition.includes(',')) {
+    statesToCheckFor = lastRegisteredTransition.split(',')
+  } else {
+    statesToCheckFor = lastRegisteredTransition
+  }
+
 
 }

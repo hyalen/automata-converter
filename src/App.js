@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react' 
 
-import { createNFAObject } from './converter'
+import { createNFAObject, getNFAAlphabet, categorizeTransitionByState, createNFATable } from './converter'
 
 // assets
 import './App.css'

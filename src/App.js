@@ -51,6 +51,7 @@ function App () {
     setNFANodes(nodes)
   }
 
+
   console.log('nfa nodes.......... ', NFANodes)
 
   //function parseNFAGraphEdges()

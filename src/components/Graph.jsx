@@ -39,6 +39,7 @@ const Graph = ({nodes, edges }) => {
         id: "userEdge2",
         source: "device1",
         target: "user",
+        label: "hiiii",
         size: 3,
         color: "#ff0000",
         neighborsOf: "n" + ((Math.random() * 2) | 0),

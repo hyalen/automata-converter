@@ -23,7 +23,7 @@ function App () {
       setNFATable(NFATable)
       setCategorizedTransitions(categorizedTransitions)
       setParsedNFAObject(obj)
-      parseNFAGraphNodes(obj)
+      parseNFAGraphNodes(NFATable)
     }
   }, [values])
 
@@ -32,8 +32,8 @@ function App () {
     setValues(content)
   }
 
-  function parseNFAGraphNodes(parsedNFAObject) {
-    const nodes = parsedNFAObject.transitions.map(transition => {
+  function parseNFAGraphNodes(NFATable) {
+    const nodes = NFATable[0].map(({transition}) => {
       return {
         id: transition,
         label: transition,
@@ -43,9 +43,6 @@ function App () {
     })
     setNFANodes(nodes)
   }
-
-
-  console.log('nfa nodes.......... ', NFANodes)
 
   //function parseNFAGraphEdges()
 

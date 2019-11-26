@@ -17,7 +17,6 @@ function App () {
   const [NFANodes, setNFANodes] = useState([])
   const [NFAEdges, setNFAEdges] = useState([])
 
-
   useEffect(() => {
     if(values !== null) { 
       const {NFATable, categorizedTransitions, obj} = createNFAObject(values)
@@ -27,12 +26,6 @@ function App () {
       parseNFAGraphNodes(obj)
     }
   }, [values])
-
-/*   useEffect(() => {
-    if(parsedNFAObject !== undefined) {
-      parseNFAGraphNodes(parsedNFAObject)
-    }
-  }, [NFANodes]) */
 
   function handleFileRead () {
     const content = fileReader.result

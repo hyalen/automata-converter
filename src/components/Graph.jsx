@@ -1,5 +1,6 @@
 import React from 'react';
 import {Sigma} from 'react-sigma'
+import {GRAPH_SETTINGS} from '../helpers/constants'
 
 const Graph = ({nodes, edges }) => {
 
@@ -12,27 +13,6 @@ const Graph = ({nodes, edges }) => {
         nodes: [],
         edges: []
     }
-
-    const settings = {
-        batchEdgesDrawing: true,
-        drawEdges: true,
-        drawLabels: true,
-        drawEdgeLabels: true,
-        hideEdgesOnMove: false,
-        animationsTime: 3000,
-        clone: false,
-        doubleClickEnabled: true,
-        mouseWheelEnabled: true,
-        minNodeSize: 5,
-        maxNodeSize: 10,
-        minArrowSize: 2,
-        minEdgeSize: 0.5,
-        maxEdgeSize: 1,
-        defaultNodeBorderColor: "#000",
-        defaultHoverLabelBGColor: "transparent",
-        labelHoverColor: "transparent",
-        defaultLabelSize: 11
-    };
     // mocked data
     graphData.nodes.push({
         id: "user",
@@ -89,7 +69,7 @@ const Graph = ({nodes, edges }) => {
     return (
         <Sigma 
         renderer="canvas"
-        settings={settings}
+        settings={GRAPH_SETTINGS}
         style={{ margin: '2rem',width: "1000px", height:"600px", backgroundColor: "#fff", display:"flex"}}
         graph={graphData}>
 

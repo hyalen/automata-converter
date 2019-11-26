@@ -1,7 +1,7 @@
 import React from 'react';
 import {Sigma} from 'react-sigma'
 
-const Graph = ({nodeName, edges, graphObject}) => {
+const Graph = ({nodes, edges }) => {
 
     /* TODO:
         https://codesandbox.io/s/349znkyn21?from-embed
@@ -90,7 +90,7 @@ const Graph = ({nodeName, edges, graphObject}) => {
         <Sigma 
         renderer="canvas"
         settings={settings}
-        style={{width: "1000px", height:"600px", backgroundColor: "#fff", display:"flex"}}
+        style={{ margin: '2rem',width: "1000px", height:"600px", backgroundColor: "#fff", display:"flex"}}
         graph={graphData}>
 
         </Sigma>

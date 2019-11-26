@@ -14,8 +14,10 @@ export const createNFAObject = (file) => {
   obj.transitions = transitions
   const categorizedTransitions = categorizeTransitionByState(obj.alphabet);
   NFATable = createNFATable(categorizedTransitions, obj.transitions);
+  console.log('nfa table on converter.......... ', NFATable)
   const initialDFATable = getDFAInitialState(NFATable);
   const DFATable = createDFATable(initialDFATable, NFATable)
+  return {NFATable, categorizedTransitions, obj}
   // const DFATransitions = DFATransitionsArray(DFATable)
   // getNextDFAState(DFATransitions, NFATable, obj.alphabet.split(' ').join(''))
 }
@@ -23,7 +25,7 @@ export const createNFAObject = (file) => {
 function createDFATable(initialDFATable, NFATable) {
   let transitionArray = [initialDFATable[0][0].transition]
   Object.keys(initialDFATable).forEach(key => {
-    initialDFATable[key].map(transitionItem => {
+    initialDFATable[key].forEach(transitionItem => {
       if (foundItemInsideArray(transitionArray, initialDFATable[key], 'state').length === 0) {
         transitionArray.push(transitionItem.state)
         insertNewDFAItem(initialDFATable, transitionItem.state)
@@ -60,7 +62,7 @@ function insertNewDFAItem (initialDFATable, itemToBeInserted) {
     }
   })
 
-  Object.keys(initialDFATable).map(key => {
+  Object.keys(initialDFATable).forEach(key => {
     initialDFATable[key].push({
       transition: itemToBeInserted,
       state: newState[key]

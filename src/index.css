@@ -11,3 +11,18 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.app-form {
+  display:  flex;
+  justify-content: center;
+  align-content: flex-end;
+  width: 100%;
+  height: 200px;
+  align-items: center;
+}
+
+.app-file-upload-button {
+  color: #333333;
+  border: none;
+  background-color: darkgray;
+}

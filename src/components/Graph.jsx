@@ -10,11 +10,14 @@ const Graph = ({nodes, edges }) => {
         Check how the edges are labeled
     */
     const graphData = {
-        nodes: [],
-        edges: []
+      nodes,
+      edges
     }
+
+    console.log('graph data.................. ', graphData)
+    
     // mocked data
-    graphData.nodes.push({
+/*     graphData.nodes.push({
         id: "user",
         label: "Vasanth",
         x: 5,
@@ -66,15 +69,13 @@ const Graph = ({nodes, edges }) => {
         borderColor: "#FF3333",
 
       })
-
+ */
     return (
         <Sigma 
-        renderer="canvas"
-        settings={GRAPH_SETTINGS}
-        style={{ margin: '2rem',width: "1000px", height:"600px", backgroundColor: "#fff", display:"flex"}}
-        graph={graphData}>
-
-        </Sigma>
+          renderer="canvas"
+          settings={GRAPH_SETTINGS}
+          style={{ margin: '2rem',width: "1000px", height:"600px", backgroundColor: "#fff", display:"flex"}}
+          graph={graphData} />
     )
 };
 

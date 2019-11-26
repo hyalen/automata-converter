@@ -60,10 +60,7 @@ function App () {
         }
       })
     }).flat()
-    console.log('NFA Table.................... ', NFATable)
-    console.log('NFA ndes............... ', NFANodes)
-
-    console.log('NFA aEDGES.............. ', NFAEdges)
+    setNFAEdges(NFAEdges)
   }
 
   function handleChange(file) {
@@ -75,8 +72,8 @@ function App () {
   return (
     <div className='app'>
       <div className='app-header'>
-      <Graph />
-      <Graph />
+      {NFANodes.length > 0 && NFAEdges.length > 0 && <Graph nodes={NFANodes} edges={NFAEdges}/> }
+      {/*  <Graph />*/}
         <form>
           <div className='app-form'>
             <label htmlFor='file-upload'>Upload NFA</label>

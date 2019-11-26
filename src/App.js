@@ -24,8 +24,13 @@ function App () {
       setCategorizedTransitions(categorizedTransitions)
       setParsedNFAObject(obj)
       parseNFAGraphNodes(NFATable)
+
     }
   }, [values])
+
+  useEffect(() => {
+    parseNFAGraphEdges(NFATable, NFANodes)
+  }, [NFANodes])
 
   function handleFileRead () {
     const content = fileReader.result
@@ -44,7 +49,22 @@ function App () {
     setNFANodes(nodes)
   }
 
-  //function parseNFAGraphEdges()
+  function parseNFAGraphEdges(NFATable, NFANodes) {
+    const NFAEdges = Object.keys(NFATable).map(alphabet => {
+      return NFATable[alphabet].map(transitionObj => {
+        return {
+          id: `${transitionObj.transition} ${alphabet}`,
+          source: transitionObj.transition,
+          target: transitionObj.state !== 'Y' ? transitionObj.state : '',
+          label: `${transitionObj.transition} ${alphabet}`
+        }
+      })
+    }).flat()
+    console.log('NFA Table.................... ', NFATable)
+    console.log('NFA ndes............... ', NFANodes)
+
+    console.log('NFA aEDGES.............. ', NFAEdges)
+  }
 
   function handleChange(file) {
     fileReader = new FileReader()

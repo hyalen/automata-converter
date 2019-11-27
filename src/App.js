@@ -43,23 +43,53 @@ function App () {
         id: transition,
         label: transition,
         color: "#000",
-        size: 10
+        size: 10,
+        x: Math.random(),
+        y: Math.random(),
+        size: 9,
+        color: "#000000",
+        borderColor: "#FF3333",
       }
     })
     setNFANodes(nodes)
   }
 
   function parseNFAGraphEdges(NFATable, NFANodes) {
-    const NFAEdges = Object.keys(NFATable).map(alphabet => {
-      return NFATable[alphabet].map(transitionObj => {
-        return {
-          id: `${transitionObj.transition} ${alphabet}`,
-          source: transitionObj.transition,
-          target: transitionObj.state !== 'Y' ? transitionObj.state : '',
-          label: `${transitionObj.transition} ${alphabet}`
+    let NFAEdges = []
+    debugger
+    NFAEdges = Object.keys(NFATable).map((alphabet) => {
+      return NFATable[alphabet].map((transitionObj, i) => {
+        let obj = {}
+        if(!transitionObj.state.includes(',')) {
+          // The SIgma JS library "target" attribute is required in the edges
+          // so, in the lambda functions, it can't be removed, so the node will target
+          // itself, but the arrow will be invisible
+          obj = {
+            id: Math.random(),
+            source: transitionObj.transition,
+            target: transitionObj.state === "Y" ? transitionObj.transition : transitionObj.state,
+            color: transitionObj.state === "Y" ? "#fff" : "#ff0000",
+            type: "curvedArrow"
+          }
+          return obj
+        } else {
+          const state = transitionObj.state.split(',')
+            return state.map((state, i) => {
+              return { id:  Math.random(),
+              source: transitionObj.transition,
+              target: state,
+              color: "#ff0000",
+              type: "curvedArrow"
+            }
+          })
         }
       })
-    }).flat()
+    }).flat(3)
+
+    console.log(JSON.stringify(NFAEdges))
+
+    console.log(JSON.stringify(NFANodes))
+
     setNFAEdges(NFAEdges)
   }
 

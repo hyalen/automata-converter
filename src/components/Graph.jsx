@@ -67,7 +67,6 @@ const Graph = ({nodes, edges }) => {
         size: 8,
         color: "#000000",
         borderColor: "#FF3333",
-
       })
  */
     return (

@@ -1,150 +1,124 @@
-let obj = {}
-let NFATable = {}
-export const createNFAObject = (file) => {
+// initial file data
+let nfaAlphabet = []
+let initialNode = null
+let finalNode = null
+let nodes
+let dfaNodes = []
+
+// nfa data
+let nfaObj = {}
+
+//dfa data
+let dfaObj = {}
+
+export const init = (file) => {
   const fileData = file.split('\n')
-
-  let transitions = fileData.filter((item, index) => {
-    return index >= 3
-  })
-
-  obj.type = 'NFA'
-  obj.alphabet = fileData[0]
-  obj.initialState = fileData[1]
-  obj.finalState = fileData[2]
-  obj.transitions = transitions
-  const categorizedTransitions = categorizeTransitionByState(obj.alphabet);
-  NFATable = createNFATable(categorizedTransitions, obj.transitions);
-  console.log('nfa table on converter.......... ', NFATable)
-  const initialDFATable = getDFAInitialState(NFATable);
-  const DFATable = createDFATable(initialDFATable, NFATable)
-  return {NFATable, categorizedTransitions, obj}
-  // const DFATransitions = DFATransitionsArray(DFATable)
-  // getNextDFAState(DFATransitions, NFATable, obj.alphabet.split(' ').join(''))
+  nfaAlphabet = fileData[0].split(' ')
+  initialNode = fileData[1]
+  finalNode = fileData[2]
+  let rawTransitions = fileData.filter((item, index) => index >= 3)
+  
+  createNFAObject(rawTransitions)
+  createInitialDFA()
 }
 
-function createDFATable(initialDFATable, NFATable) {
-  let transitionArray = [initialDFATable[0][0].transition]
-  Object.keys(initialDFATable).forEach(key => {
-    initialDFATable[key].forEach(transitionItem => {
-      if (foundItemInsideArray(transitionArray, initialDFATable[key], 'state').length === 0) {
-        transitionArray.push(transitionItem.state)
-        insertNewDFAItem(initialDFATable, transitionItem.state)
+export const nfa = nfaObj
+
+function createNFAObject(rawTransitions) {
+  nodes = createNodes(rawTransitions)
+
+  // initially, the object will contain only null values for each node key
+  nfaObj = nodes.reduce((node, key) => ({ ...node, [key]: {} }), {})
+
+  // now we can populate each key, with its own connected transitions
+  rawTransitions.map((item, index) => {
+    const splitLine = item.split(' ')
+    Object.keys(nfaObj).forEach(key => {
+      if (splitLine[0] === key) {
+        const transitionValue = splitLine.length === 3 ? splitLine[splitLine.length - 1] : null
+        nfaObj[key][nfaAlphabet[index % nfaAlphabet.length]] = transitionValue
       }
     })
-    //console.log(initialDFATable)
   })
-
 }
 
-// checks if the new transition from DFA is already inside the array
-function foundItemInsideArray(transitionArray, DFATableArray, type) {
-  if (type === 'state') {
-    return DFATableArray.filter(element => transitionArray.includes(element.state));
-  } else if (type === 'transition') {
-    return DFATableArray.filter(element => transitionArray.includes(element.transition));
-  }
-}
+function createNodes(rawTransitions) {
+  let nfaNodes = []
+  const alphabetLength = nfaAlphabet.length
 
-function insertNewDFAItem (initialDFATable, itemToBeInserted) {
-  let state = itemToBeInserted.split(',')
-  let newState = []
-  Object.keys(NFATable).forEach(key => {
-    if (foundItemInsideArray(state, NFATable[key], 'transition').length > 0) {
-      let stringifiedTransition = ''
-      let newStateCopy = foundItemInsideArray(state, NFATable[key], 'transition').map((item, index) => {
-        Object.keys(item).forEach(key => {
-          if (key === 'state') {
-            stringifiedTransition += item[key] + ','
-          }
-        })
-      })
-      newState.push(stringifiedTransition.substr(0, stringifiedTransition.length - 1))
+  // creates an array with all of the nodes listed in the file.
+  // This will be useful in addition to create unique objects for each node
+  rawTransitions.map((item, index) => {
+    if (index % alphabetLength === 0) {
+      const line = item.split(' ')
+      nfaNodes.push(line[0])
     }
   })
 
-  Object.keys(initialDFATable).forEach(key => {
-    initialDFATable[key].push({
-      transition: itemToBeInserted,
-      state: newState[key]
-    })
-  })
-
-  console.log(initialDFATable)
+  return nfaNodes
 }
 
-export function categorizeTransitionByState(alphabet) {
-  const alphabetElements = alphabet.split(' ');
-  const categorizedTransitions = alphabetElements.reduce((categorizedTransitionState, state) =>
-    ({...categorizedTransitionState, [state]: []}), {});
+// this function assigns the first node from NFA to the DFA,
+// and then it checks for a non-mapped node. Example: {x,x1}
+function createInitialDFA() {
+  let firstNfaNode = nfaObj[Object.keys(nfaObj)[0]]
+  dfaObj[Object.keys(nfaObj)[0]] = firstNfaNode
 
-/*    format {
-      '0': [],
-      '1': []
+  let newDfaNode = newNodeWasFound(dfaObj)
+  createDFAObject(newDfaNode)
+}
+
+function createDFAObject(newDfaNode) {
+  newDfaNode = newDfaNode.split(',')
+  let tempObj = {}
+  let tempArray = []
+  
+  Object.keys(nfaObj).forEach(key => {
+    if (newDfaNode.includes(key)) {
+      tempObj[key] = nfaObj[key]
     }
- */
-  return categorizedTransitions;
-}
-
-export function createNFATable(categorizedTransitionsObj, rawTransitions) {
-  const clonedCategorizedTransitionsObj = JSON.parse(JSON.stringify(categorizedTransitionsObj));
-  for (let i = 0; i < rawTransitions.length; i++) {
-    const [transition, inAlphabet, state = 'Y'] = rawTransitions[i].split(' ');
-    clonedCategorizedTransitionsObj[inAlphabet].push({transition, state});
-  }
-  return clonedCategorizedTransitionsObj;
-}
-
-function getDFAInitialState(categorizedAFN) {
-  const categorizedDFA = JSON.parse(JSON.stringify(categorizedAFN));
-  Object.keys(categorizedAFN).map(state => {
-    categorizedDFA[state] = [categorizedDFA[state].shift()];
   })
-  return categorizedDFA;
-}
 
-function searchDFAState(statesToCheckFor, NFATable, alphabetSymbol) {
-    return NFATable[alphabetSymbol].filter(transitionObj => {
-      if(statesToCheckFor.includes(transitionObj.transition)) {
-        return transitionObj
+  for(let i = 0; i < nfaAlphabet.length; i++) {
+    let word = ''
+    Object.keys(tempObj).forEach(key => {
+      const item = tempObj[key][nfaAlphabet[i]]
+      if (item !== null) {
+        word += item + ','
+      } else {
+        word += ''
       }
     })
+    tempArray.push(word.substr(0, word.length -1))
+  }
+
+  dfaObj[newDfaNode] = nfaAlphabet.reduce((node, key) => ({ ...node, [key]: '' }), {})
+  let pos = 0
+  Object.keys(dfaObj[newDfaNode]).forEach(key => {
+    dfaObj[newDfaNode][key] = tempArray[pos]
+    pos++;
+  })
+
+  for (let i = 0; i < tempArray.length; i++) {
+    if (!dfaNodes.includes(tempArray[i]) && !nodes.includes(tempArray[i])) {
+      dfaNodes.push(tempArray[i])
+      createDFAObject(tempArray[i])
+    }
+  }
 }
 
-function getNextDFAState(DFATransitions, NFATable, DFAalphabet) {
-  
-  //transition created to represent next DFA states for each state symbol. If I have an "01"
-  // alphabet, then I'll have two objects with DFA states and transitions when "0" and "1"
-  const newTransitionObject = {
-    transition: '',
-    state: ''
-  };
+function newNodeWasFound(dfaNode) {
+  let newNode = null
 
-  let statesToCheckFor;
-  const foundStates = []
+  Object.keys(dfaNode).forEach(key => {
+    for (let i = 0; i < nfaAlphabet.length; i++) {
+      const transitionItem = dfaNode[key][nfaAlphabet[i]]
+      if (transitionItem !== null && !nodes.includes(transitionItem)) {
+        dfaNodes.push(transitionItem)
+        newNode = transitionItem
+      }
+    }
+  })
 
-  const lastRegisteredTransition = DFATransitions[DFATransitions.length - 1];
-  newTransitionObject.transition = lastRegisteredTransition;
-
-  /* check if next DFA transition has more than one 
-   state to check for in the NFA table, "x, x1", as an example */
-  if(lastRegisteredTransition.includes(',')) {
-    statesToCheckFor = lastRegisteredTransition.split(',')
-  } else {
-    statesToCheckFor = [lastRegisteredTransition]
-  }
-
-  /* 
-    Remove this comment, if necessary.
-    The "foundStates" will contain an array with the next DFA state object
-    for each DFA alphabet symbol, in  gieven transitions.
-    For example: In my "newTransition" object I have a transition in
-    "X" and the alphabet "01"
-    Given "X", the "foundStates" will return an array with composed the "X" state objects for "0" and "1":
-    X in NFA when O -> X
-    X in NFA when 1 -> X,11
-  */
-  for(const alphabetSymbol of DFAalphabet) {
-    foundStates.push({ for: alphabetSymbol, transitions: searchDFAState(statesToCheckFor, NFATable, alphabetSymbol)})
-  }
-  
+  return newNode
 }

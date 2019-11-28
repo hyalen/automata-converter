@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react' 
 import Graph from './components/Graph'
 
-import { createNFAObject, createNFATable, categorizeTransitionByState } from './converter'
+import { init } from './converter'
 
 // assets
 import './App.css'
 
 let fileReader
-
+let verify = null
 function App () {
   const [values, setValues] = useState(null)
   const [NFATable, setNFATable] = useState({})
@@ -18,8 +18,11 @@ function App () {
   const [NFAEdges, setNFAEdges] = useState([])
 
   useEffect(() => {
-    if(values !== null) { 
-      const {NFATable, categorizedTransitions, obj} = createNFAObject(values)
+    if (values !== null) {
+      init(values)
+    }
+    if(verify !== null) { 
+      const {NFATable, categorizedTransitions, obj} = init(values)
       setNFATable(NFATable)
       setCategorizedTransitions(categorizedTransitions)
       setParsedNFAObject(obj)
@@ -68,11 +71,10 @@ function App () {
     fileReader.onloadend = handleFileRead
     fileReader.readAsText(file)
   }
-
+// {NFANodes.length > 0 && NFAEdges.length > 0 && <Graph nodes={NFANodes} edges={NFAEdges}/>}
   return (
     <div className='app'>
       <div className='app-header'>
-      {NFANodes.length > 0 && NFAEdges.length > 0 && <Graph nodes={NFANodes} edges={NFAEdges}/> }
       {/*  <Graph />*/}
         <form>
           <div className='app-form'>
@@ -80,7 +82,6 @@ function App () {
             <input className='app-file-upload-button' onChange={evt => handleChange(evt.target.files[0])} type='file' id='file-upload' />
           </div>
         </form>
-        {values !== null && <p style={{ maxWidth: '200px' }}>{values}</p>}
       </div>
     </div>
   )

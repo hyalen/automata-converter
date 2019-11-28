@@ -19,43 +19,45 @@ export const init = (file) => {
   let rawTransitions = fileData.filter((item, index) => index >= 3)
   
   createNFAObject(rawTransitions)
+  nodes = createNodes(rawTransitions)
   createInitialDFA()
 }
 
 export const nfa = nfaObj
 
-function createNFAObject(rawTransitions) {
-  nodes = createNodes(rawTransitions)
+function createInitialObj(nodes) {
+  return nodes.reduce((node, key) => ({ ...node, [key]: {} }), {})
+}
 
+function createNFAObject(rawTransitions) {
   // initially, the object will contain only null values for each node key
-  nfaObj = nodes.reduce((node, key) => ({ ...node, [key]: {} }), {})
+  nfaObj = createInitialObj(nodes)
 
   // now we can populate each key, with its own connected transitions
-  rawTransitions.map((item, index) => {
-    const splitLine = item.split(' ')
-    Object.keys(nfaObj).forEach(key => {
-      if (splitLine[0] === key) {
-        const transitionValue = splitLine.length === 3 ? splitLine[splitLine.length - 1] : null
-        nfaObj[key][nfaAlphabet[index % nfaAlphabet.length]] = transitionValue
+  rawTransitions.forEach((transition, index) => {
+    const parsedTransitions = transition.split(' ')
+    const parsedTransitionInitialState = parsedTransitions[0]
+    const hasNextState = parsedTransitions.length === 3
+    Object.keys(nfaObj).forEach(NFAInitialState => {
+      if (parsedTransitionInitialState === NFAInitialState) {
+        const transitionValue =  hasNextState ? parsedTransitions[parsedTransitions.length - 1] : null
+        nfaObj[transition][nfaAlphabet[index % nfaAlphabet.length]] = transitionValue
       }
     })
   })
+  console.log('nfa obj................... ', nfaObj)
 }
 
 function createNodes(rawTransitions) {
-  let nfaNodes = []
   const alphabetLength = nfaAlphabet.length
-
   // creates an array with all of the nodes listed in the file.
   // This will be useful in addition to create unique objects for each node
-  rawTransitions.map((item, index) => {
+  return rawTransitions.map((item, index) => {
     if (index % alphabetLength === 0) {
       const line = item.split(' ')
-      nfaNodes.push(line[0])
+      return line
     }
   })
-
-  return nfaNodes
 }
 
 // this function assigns the first node from NFA to the DFA,

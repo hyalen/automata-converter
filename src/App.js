@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react' 
 import Graph from './components/Graph'
 
-import { init } from './converter'
+import { init, shallowClonedNFA, DFA } from './converter'
 
 // assets
 import './App.css'
@@ -11,8 +11,7 @@ let verify = null
 function App () {
   const [values, setValues] = useState(null)
   const [NFATable, setNFATable] = useState({})
-  const [categorizedTransitions, setCategorizedTransitions] = useState({})
-  const [parsedNFAObject, setParsedNFAObject] = useState({})
+  const [DFATable, setDFATable] = useState({})
 
   const [NFANodes, setNFANodes] = useState([])
   const [NFAEdges, setNFAEdges] = useState([])
@@ -20,20 +19,23 @@ function App () {
   useEffect(() => {
     if (values !== null) {
       init(values)
+      setNFATable(NFATable)
+      console.log('NFA............... ', shallowClonedNFA)
+      console.log('DFA.................. ', DFA)
     }
-    if(verify !== null) { 
+/*     if(verify !== null) { 
       const {NFATable, categorizedTransitions, obj} = init(values)
       setNFATable(NFATable)
       setCategorizedTransitions(categorizedTransitions)
       setParsedNFAObject(obj)
       parseNFAGraphNodes(NFATable)
 
-    }
+    } */
   }, [values])
 
-  useEffect(() => {
+/*   useEffect(() => {
     parseNFAGraphEdges(NFATable, NFANodes)
-  }, [NFANodes])
+  }, [NFANodes]) */
 
   function handleFileRead () {
     const content = fileReader.result

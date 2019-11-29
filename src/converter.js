@@ -11,6 +11,9 @@ let nfaObj = {}
 //dfa data
 let dfaObj = {}
 
+export let shallowClonedNFA
+export const DFA = dfaObj
+
 export const init = (file) => {
   const fileData = file.split('\n')
   nfaAlphabet = fileData[0].split(' ')
@@ -20,9 +23,10 @@ export const init = (file) => {
   
   createNFAObject(rawTransitions)
   createInitialDFA()
-}
 
-export const nfa = nfaObj
+  console.log('nfa object.................. ', nfaObj)
+  console.log('dfa oobject.................... ', dfaObj)
+}
 
 function createNFAObject(rawTransitions) {
   nodes = createNodes(rawTransitions)
@@ -40,6 +44,8 @@ function createNFAObject(rawTransitions) {
       }
     })
   })
+
+  shallowClonedNFA = nfaObj
 }
 
 function createNodes(rawTransitions) {

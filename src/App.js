@@ -15,13 +15,14 @@ function App () {
 
   const [NFANodes, setNFANodes] = useState([])
   const [NFAEdges, setNFAEdges] = useState([])
+  const [DFANodes, setDFAEdges] = useState([])
 
   useEffect(() => {
     if (values !== null) {
       init(values)
-      setNFATable(NFATable)
-      console.log('NFA............... ', shallowClonedNFA)
-      console.log('DFA.................. ', DFA)
+      setNFATable(shallowClonedNFA)
+      setDFATable(DFA)
+
     }
 /*     if(verify !== null) { 
       const {NFATable, categorizedTransitions, obj} = init(values)
@@ -33,9 +34,9 @@ function App () {
     } */
   }, [values])
 
-/*   useEffect(() => {
-    parseNFAGraphEdges(NFATable, NFANodes)
-  }, [NFANodes]) */
+  useEffect(() => {
+    parseNFAGraphNodes(NFATable)
+  }, [NFATable])
 
   function handleFileRead () {
     const content = fileReader.result
@@ -43,20 +44,19 @@ function App () {
   }
 
   function parseNFAGraphNodes(NFATable) {
-    const nodes = NFATable[0].map(({transition}) => {
-      return {
-        id: transition,
-        label: transition,
-        color: "#000",
-        size: 10,
-        x: Math.random(),
-        y: Math.random(),
-        size: 9,
-        color: "#000000",
-        borderColor: "#FF3333",
-      }
-    })
-    setNFANodes(nodes)
+    console.log('NFA TABLE............... ', NFATable)
+    const NFANodes = Object.keys(NFATable).map(initialState => ({
+      id: initialState,
+      label: initialState,
+      color: "#000",
+      size: 10,
+      x: Math.random(),
+      y: Math.random(),
+      size: 9,
+      color: "#000000",
+      borderColor: "#FF3333"
+    }))
+    setNFANodes(NFANodes)
   }
 
   function parseNFAGraphEdges(NFATable, NFANodes) {

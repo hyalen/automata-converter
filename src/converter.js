@@ -23,9 +23,6 @@ export const init = (file) => {
   
   createNFAObject(rawTransitions)
   createInitialDFA()
-
-  console.log('nfa object.................. ', nfaObj)
-  console.log('dfa oobject.................... ', dfaObj)
 }
 
 function createNFAObject(rawTransitions) {

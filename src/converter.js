@@ -14,13 +14,13 @@ let dfaObj = {}
 export let shallowClonedNFA
 export const DFA = dfaObj
 
-export const init = (file) => {
+export const init = file => {
   const fileData = file.split('\n')
   nfaAlphabet = fileData[0].split(' ')
   initialNode = fileData[1]
   finalNode = fileData[2]
   let rawTransitions = fileData.filter((item, index) => index >= 3)
-  
+
   createNFAObject(rawTransitions)
   createInitialDFA()
 }
@@ -36,7 +36,8 @@ function createNFAObject(rawTransitions) {
     const splitLine = item.split(' ')
     Object.keys(nfaObj).forEach(key => {
       if (splitLine[0] === key) {
-        const transitionValue = splitLine.length === 3 ? splitLine[splitLine.length - 1] : null
+        const transitionValue =
+          splitLine.length === 3 ? splitLine[splitLine.length - 1] : null
         nfaObj[key][nfaAlphabet[index % nfaAlphabet.length]] = transitionValue
       }
     })
@@ -75,14 +76,14 @@ function createDFAObject(newDfaNode) {
   newDfaNode = newDfaNode.split(',')
   let tempObj = {}
   let tempArray = []
-  
+
   Object.keys(nfaObj).forEach(key => {
     if (newDfaNode.includes(key)) {
       tempObj[key] = nfaObj[key]
     }
   })
 
-  for(let i = 0; i < nfaAlphabet.length; i++) {
+  for (let i = 0; i < nfaAlphabet.length; i++) {
     let word = ''
     Object.keys(tempObj).forEach(key => {
       const item = tempObj[key][nfaAlphabet[i]]
@@ -92,14 +93,17 @@ function createDFAObject(newDfaNode) {
         word += ''
       }
     })
-    tempArray.push(word.substr(0, word.length -1))
+    tempArray.push(word.substr(0, word.length - 1))
   }
 
-  dfaObj[newDfaNode] = nfaAlphabet.reduce((node, key) => ({ ...node, [key]: '' }), {})
+  dfaObj[newDfaNode] = nfaAlphabet.reduce(
+    (node, key) => ({ ...node, [key]: '' }),
+    {}
+  )
   let pos = 0
   Object.keys(dfaObj[newDfaNode]).forEach(key => {
     dfaObj[newDfaNode][key] = tempArray[pos]
-    pos++;
+    pos++
   })
 
   for (let i = 0; i < tempArray.length; i++) {

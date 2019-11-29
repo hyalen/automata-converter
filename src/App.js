@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react' 
+import React, { useEffect, useState } from 'react'
 import Graph from './components/Graph'
 
 import { init, shallowClonedNFA, DFA } from './converter'
@@ -8,7 +8,7 @@ import './App.css'
 
 let fileReader
 let verify = null
-function App () {
+function App() {
   const [values, setValues] = useState(null)
   const [NFATable, setNFATable] = useState({})
   const [DFATable, setDFATable] = useState({})
@@ -22,9 +22,8 @@ function App () {
       init(values)
       setNFATable(shallowClonedNFA)
       setDFATable(DFA)
-
     }
-/*     if(verify !== null) { 
+    /*     if(verify !== null) { 
       const {NFATable, categorizedTransitions, obj} = init(values)
       setNFATable(NFATable)
       setCategorizedTransitions(categorizedTransitions)
@@ -36,32 +35,33 @@ function App () {
 
   useEffect(() => {
     parseNFAGraphNodes(NFATable)
+    parseAutomataGraphEdges(NFATable)
   }, [NFATable])
 
-  function handleFileRead () {
+  function handleFileRead() {
     const content = fileReader.result
     setValues(content)
   }
 
   function parseNFAGraphNodes(NFATable) {
-    console.log('NFA TABLE............... ', NFATable)
     const NFANodes = Object.keys(NFATable).map(initialState => ({
       id: initialState,
       label: initialState,
-      color: "#000",
+      color: '#000',
       size: 10,
       x: Math.random(),
       y: Math.random(),
       size: 9,
-      color: "#000000",
-      borderColor: "#FF3333"
+      color: '#000000',
+      borderColor: '#FF3333'
     }))
     setNFANodes(NFANodes)
   }
 
-  function parseNFAGraphEdges(NFATable, NFANodes) {
+  function parseAutomataGraphEdges(NFATable, NFANodes) {
+    console.log('NFA TABLE............... ', JSON.stringify(NFATable))
     let NFAEdges = []
-    debugger
+    /* debugger
     NFAEdges = Object.keys(NFATable).map((alphabet) => {
       return NFATable[alphabet].map((transitionObj, i) => {
         let obj = {}
@@ -95,7 +95,7 @@ function App () {
 
     console.log(JSON.stringify(NFANodes))
 
-    setNFAEdges(NFAEdges)
+    setNFAEdges(NFAEdges) */
   }
 
   function handleChange(file) {
@@ -103,15 +103,20 @@ function App () {
     fileReader.onloadend = handleFileRead
     fileReader.readAsText(file)
   }
-// {NFANodes.length > 0 && NFAEdges.length > 0 && <Graph nodes={NFANodes} edges={NFAEdges}/>}
+  // {NFANodes.length > 0 && NFAEdges.length > 0 && <Graph nodes={NFANodes} edges={NFAEdges}/>}
   return (
-    <div className='app'>
-      <div className='app-header'>
-      {/*  <Graph />*/}
+    <div className="app">
+      <div className="app-header">
+        {/*  <Graph />*/}
         <form>
-          <div className='app-form'>
-            <label htmlFor='file-upload'>Upload NFA</label>
-            <input className='app-file-upload-button' onChange={evt => handleChange(evt.target.files[0])} type='file' id='file-upload' />
+          <div className="app-form">
+            <label htmlFor="file-upload">Upload NFA</label>
+            <input
+              className="app-file-upload-button"
+              onChange={evt => handleChange(evt.target.files[0])}
+              type="file"
+              id="file-upload"
+            />
           </div>
         </form>
       </div>
